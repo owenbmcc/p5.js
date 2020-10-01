@@ -224,7 +224,7 @@ p5.Image = function(width, height) {
  */
 p5.Image.prototype._animateGif = function(pInst) {
   const props = this.gifProperties;
-  if (props.playing && props.frameCount != pInst.frameCount) {
+  if (props.playing && props.frameCount !== pInst.frameCount) {
     props.timeDisplayed += pInst.deltaTime;
     const curDelay = props.frames[props.displayIndex].delay;
     if (props.timeDisplayed >= curDelay) {
@@ -244,7 +244,7 @@ p5.Image.prototype._animateGif = function(pInst) {
     }
   }
   // update the gif frameCount after drawing once
-  if (props.frameCount != pInst.frameCount) {
+  if (props.frameCount !== pInst.frameCount) {
     this.gifProperties.frameCount = pInst.frameCount;
   }
 };
