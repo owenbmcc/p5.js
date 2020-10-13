@@ -183,6 +183,7 @@ class p5 {
     this._preloadCount = 0;
     this._isGlobal = false;
     this._loop = true;
+    this._blurHappened = false;
     this._initializeInstanceVariables();
     this._defaultCanvasSize = {
       width: 100,
@@ -369,6 +370,7 @@ class p5 {
       const now = window.performance.now();
       const time_since_last = now - this._lastFrameTime;
       const target_time_between_frames = 1000 / this._targetFrameRate;
+      
 
       // only draw if we really need to; don't overextend the browser.
       // draw if we're within 5ms of when our next frame should paint
@@ -384,9 +386,15 @@ class p5 {
         time_since_last >= target_time_between_frames - epsilon
       ) {
         //mandatory update values(matrixs and stack)
-        this.redraw();
+        if (this._loop) {
+          this.redraw();
+        }
         this._frameRate = 1000.0 / (now - this._lastFrameTime);
-        this.deltaTime = now - this._lastFrameTime;
+        this.deltaTime = time_since_last;
+        if (this._blurHappened) {
+            this.deltaTime = 0;
+            this._blurHappened = false;
+        }
         this._setProperty('deltaTime', this.deltaTime);
         this._lastFrameTime = now;
 
@@ -402,13 +410,14 @@ class p5 {
           this._setProperty('movedX', 0);
           this._setProperty('movedY', 0);
         }
-      }
+      } 
+
 
       // get notified the next time the browser gives us
       // an opportunity to draw.
-      if (this._loop) {
+      // if (this._loop) {
         this._requestAnimId = window.requestAnimationFrame(this._draw);
-      }
+      // }
     };
 
     this._setProperty = (prop, value) => {
@@ -567,6 +576,7 @@ class p5 {
     };
     const blurHandler = () => {
       this._setProperty('focused', false);
+      this._blurHappened = true;
     };
     window.addEventListener('focus', focusHandler);
     window.addEventListener('blur', blurHandler);
